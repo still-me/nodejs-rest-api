@@ -1,9 +1,9 @@
-const contactsOperations = require("../../model/contacts");
+const Contact = require("../../models");
 
 const deleteContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const deletedContact = await contactsOperations.deleteContact(id);
+    const deletedContact = await Contact.findByIdAndDelete(id);
     if (!deletedContact) {
       const message = `contact with id ${id} not found`;
       return res.status(404).json({
@@ -11,8 +11,7 @@ const deleteContact = async (req, res, next) => {
       });
     }
 
-    const message = `contact ${deletedContact.name},  deleted`;
-    res.json({ message });
+    res.json({ deletedContact });
   } catch (error) {
     next(error);
   }
