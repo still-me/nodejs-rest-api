@@ -17,6 +17,11 @@ const contactScheme = Schema(
       type: Boolean,
       default: false,
     },
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+    },
   },
   { versionKey: false, timestamps: true },
 );
@@ -31,6 +36,7 @@ const joiContactScheme = Joi.object({
     .pattern(new RegExp("^\\+[\\(\\-]?(\\d[\\(\\)\\-]?){11}\\d$"))
     .required(),
   favorite: Joi.boolean(),
+  owner: Joi.string(),
 });
 
 const Contact = model("contact", contactScheme);

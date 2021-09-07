@@ -2,20 +2,50 @@ const express = require("express");
 const router = express.Router();
 
 const { joiContactScheme } = require("../../models/contact");
-const { validation } = require("../../middlewares");
-const ctrl = require("../../controlers/contacts");
+const {
+  validation,
+  authenticate,
+  controllerWrapper,
+} = require("../../middlewares");
+const { contacts: ctrl } = require("../../controlers");
 const validationMiddleware = validation(joiContactScheme);
 
-router.get("/", ctrl.getAllContacts);
+router.get(
+  "/",
+  controllerWrapper(authenticate),
+  controllerWrapper(ctrl.getAllContacts),
+);
 
-router.get("/:id", ctrl.getContactById);
+router.get(
+  "/:id",
+  controllerWrapper(authenticate),
+  controllerWrapper(ctrl.getContactById),
+);
 
-router.post("/", validationMiddleware, ctrl.addContact);
+router.post(
+  "/",
+  controllerWrapper(authenticate),
+  validationMiddleware,
+  controllerWrapper(ctrl.addContact),
+);
 
-router.delete("/:id", ctrl.deleteContact);
+router.delete(
+  "/:id",
+  controllerWrapper(authenticate),
+  controllerWrapper(ctrl.deleteContact),
+);
 
-router.put("/:id", validationMiddleware, ctrl.updateContactById);
+router.put(
+  "/:id",
+  controllerWrapper(authenticate),
+  validationMiddleware,
+  controllerWrapper(ctrl.updateContactById),
+);
 
-router.patch("/:id/favorite", ctrl.updateStatusContact);
+router.patch(
+  "/:id/favorite",
+  controllerWrapper(authenticate),
+  controllerWrapper(ctrl.updateStatusContact),
+);
 
 module.exports = router;
