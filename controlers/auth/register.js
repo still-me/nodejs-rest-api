@@ -1,6 +1,5 @@
 const { User } = require("../../models");
 const { Conflict } = require("http-errors");
-// const bcrypt = require("bcryptjs");
 
 const register = async (req, res, next) => {
   const { email, password, subscription } = req.body;
@@ -9,9 +8,6 @@ const register = async (req, res, next) => {
   if (user) {
     throw new Conflict("Email in use");
   }
-  // const hashPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
-  // await User.create({ email, password: hashPassword });
-
   const newUser = new User({ email, subscription });
   newUser.setPassword(password);
   await newUser.save();
