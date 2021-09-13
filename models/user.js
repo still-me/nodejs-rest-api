@@ -1,6 +1,7 @@
 const { Schema, model } = require("mongoose");
 const Joi = require("joi");
 const bcrypt = require("bcryptjs");
+const gr = require("gravatar");
 
 const emailRegExpr =
   /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -26,6 +27,12 @@ const userSchema = Schema(
       type: String,
       default: null,
     },
+    avatarURL: {
+      type: String,
+      default: function () {
+        return gr.url(this.email, { s: "250" }, true);
+      },
+    },
   },
   { versionKey: false, timestamps: true },
 );
@@ -42,6 +49,7 @@ const joiUserSchema = Joi.object({
   email: Joi.string().pattern(emailRegExpr).required(),
   subscription: Joi.string(),
   token: Joi.string(),
+  avatar: Joi.string(),
 });
 
 const User = model("user", userSchema);
