@@ -16,7 +16,13 @@ router.post(
   userValidationMiddleware,
   controllerWrapper(ctrl.register),
 );
+
+router.get("/verify/:verificationToken", controllerWrapper(ctrl.verify));
+
+router.post("/verify", controllerWrapper(ctrl.verifyRepeat));
+
 router.post("/login", userValidationMiddleware, controllerWrapper(ctrl.login));
+
 router.get(
   "/logout",
   controllerWrapper(authenticate),

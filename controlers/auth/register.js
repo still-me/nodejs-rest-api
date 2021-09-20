@@ -1,5 +1,6 @@
 const fs = require("fs/promises");
 const path = require("path");
+const { sendMail } = require("../../utils");
 
 const { User } = require("../../models");
 const { Conflict } = require("http-errors");
@@ -11,13 +12,23 @@ const register = async (req, res) => {
   if (user) {
     throw new Conflict("Email in use");
   }
-  const newUser = new User({ email, subscription });
-  newUser.setPassword(password);
-  await newUser.save();
-  const { avatarURL, id } = newUser;
 
-  const avatarsdDir = path.join(__dirname, "../../", "public/avatars");
-  const dirPath = path.join(avatarsdDir, id);
+  const newUser = new User({ email, subscription });
+  newUser.createVerifyToken();
+  newUser.setPassword(password);
+  const { avatarURL, verifyToken } = newUser;
+
+  const verificationEmail = {
+    to: email,
+    subject: "Confirm your verification",
+    html: `<a href="http://localhost:3000/api/users/verify/${verifyToken}"> Please verify your email address </a>`,
+  };
+
+  await sendMail(verificationEmail);
+  await newUser.save();
+
+  const avatarsDir = path.join(__dirname, "../../", "public/avatars");
+  const dirPath = path.join(avatarsDir, newUser.id);
   await fs.mkdir(dirPath);
 
   res.status(201).json({
