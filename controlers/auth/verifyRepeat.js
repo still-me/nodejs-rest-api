@@ -3,7 +3,6 @@ const { BadRequest } = require("http-errors");
 const { sendMail } = require("../../utils");
 
 const verifyRepeat = async (req, res) => {
-  console.log("hello");
   const { email } = req.body;
 
   if (!email) {
